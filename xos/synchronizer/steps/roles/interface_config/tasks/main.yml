@@ -13,23 +13,18 @@
 # limitations under the License.
 
 ---
-- hosts: {{ instance_name }}
-  gather_facts: True
-  connection: ssh
-  user: ubuntu
-  sudo: yes
-  vars:
-    - source_path: /var/tmp/config
-    - zmq_sub_ip: {{ zmq_sub_ip }}
-    - zmq_pub_ip: {{ zmq_pub_ip }}
-    - dp_comm_ip: {{ dp_comm_ip }}
-    - cp_comm_ip: {{ cp_comm_ip }}
-    - fpc_ip: {{ fpc_ip }}
-    - cp_nb_server_ip: {{ cp_nb_server_ip }}
-    - s11_sgw_ip: {{  s11_sgw_ip }}
-    - s11_mme_ip: {{ s11_mme_ip }}
-    - s1u_sgw_ip: {{ s1u_sgw_ip }}
-    - scenario: {{ scenario }}
-  roles:
-    - interface_config
+- name: create config directory for interface config file
+  file:
+    path: "{{source_path}}"
+    state: directory
+    mode: 0755
 
+- name: make interface config file
+  template:
+    src=interface.cfg.j2
+    dest="{{source_path}}/interface.cfg"
+
+- name: make cp_config config file
+  template:
+    src=cp_config.cfg.j2
+    dest="{{source_path}}/cp_config.cfg"
