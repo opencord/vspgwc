@@ -13,18 +13,41 @@
 # limitations under the License.
 
 ---
-- name: create config directory for interface config file
-  file:
-    path: "{{source_path}}"
-    state: directory
-    mode: 0755
+
+- name: resolve sudo timeout
+  become: yes
+  shell: "echo 127.0.1.1       $(cat /etc/hostname) >> /etc/hosts"
 
 - name: make interface config file
+  become: yes
   template:
     src=interface.cfg.j2
-    dest="{{source_path}}/interface.cfg"
+    dest="{{source_path}}/config/interface.cfg" owner=root group=root mode=755
+
+- name: get date
+  shell: date +"%Y-%m-%d_%H-%M"
+  register: tmp_date
+
+- name: assign results into each variable
+  set_fact:
+    date: "{{ tmp_date.stdout }}"
 
 - name: make cp_config config file
+  become: yes
   template:
     src=cp_config.cfg.j2
-    dest="{{source_path}}/cp_config.cfg"
+    dest="{{source_path}}/config/cp_config.cfg" owner=root group=root mode=755
+
+#- name: Build ngic
+#  become: yes
+#  shell: "{{ item }}"
+#  args:
+#    chdir: "{{ source_path }}"
+#  environment:
+#    NG_CORE: "{{ source_path }}"
+#    RTE_SDK: "{{ source_path }}/dpdk"
+#    RTE_TARGET: "x86_64-native-linuxapp-gcc"
+#    HYPERSCANDIR: "/root/ngic/hyperscan-4.1.0"
+#  with_items:
+#    - make
+#    - /root/ngic/cp/run.sh -c 1
