@@ -36,32 +36,19 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
         super(SyncVSPGWCTenant, self).__init__(*args, **kwargs)
 
     def get_extra_attributes(self, o):
-        if self.get_scenario() == 'manual':
-            return self.get_extra_attributes_for_manual()
 
-        fields = {}
-        fields['scenario'] = self.get_scenario()
-        # for interface.cfg file
-        fields['zmq_sub_ip'] = self.get_ip_address('sbi_network', SDNControllerServiceInstance, 'zmq_sub_ip')
-        fields['zmq_pub_ip'] = self.get_ip_address('sbi_network', SDNControllerServiceInstance, 'zmq_pub_ip')
-        fields['dp_comm_ip'] = self.get_ip_address('sbi_network', VSPGWUTenant, 'dp_comm_ip')
-        fields['cp_comm_ip'] = self.get_ip_address('nbi_network', VSPGWCTenant, 'cp_comm_ip')
-        fields['fpc_ip'] = self.get_ip_address('nbi_network', SDNControllerServiceInstance, 'fpc_ip')
-        fields['cp_nb_server_ip'] = self.get_ip_address('nbi_network', VSPGWCTenant, 'cp_nb_server_ip')
+        scenario = self.get_scenario()
 
-        # for cp_config.cfg file
-        fields['s11_sgw_ip'] = self.get_ip_address('s11_network', VSPGWCTenant, 's11_sgw_ip')
-        fields['s1u_sgw_ip'] = self.get_ip_address('s1u_network', VSPGWUTenant, 's1u_sgw_ip')
-
-        # the parameter 's11_mme_ip' depends on scenarios
-        if self.get_scenario() == 'ng4t':
-            fields['s11_mme_ip'] = self.get_ip_address('s11_network', VMMETenant, 's11_mme_ip')
-        elif self.get_scenario() == 'spirent':
-            fields['s11_mme_ip'] = self.get_ip_address('s11_network', VENBServiceInstance, 's11_mme_ip')
+        if scenario == 'ng4t_with_sdncontroller':
+            return self.get_values_for_ng4t_w_sdncontroller()
+        elif scenario == 'ng4t_without_sdncontroller':
+            return self.get_values_for_ng4t_wo_sdncontroller()
+        elif scenario == 'spirent_with_sdncontroller':
+            return self.get_values_for_spirent_w_sdncontroller()
+        elif scenario == 'spirent_without_sdncontroller':
+            return self.get_values_for_spirent_wo_sdncontroller()
         else:
-            fields['s11_mme_ip'] = "scenario_error"
-
-        return fields
+            return self.get_extra_attributes_for_manual()
 
     # fields for manual case
     def get_extra_attributes_for_manual(self):
@@ -81,6 +68,79 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
         fields['s1u_sgw_ip'] = "manual"
 
         return fields
+
+    def get_values_for_ng4t_w_sdncontroller(self):
+        fields = {}
+        fields['scenario'] = "ng4t_with_sdncontroller"
+        # for interface.cfg file
+        fields['zmq_sub_ip'] = self.get_ip_address('sbi_network', SDNControllerServiceInstance, 'zmq_sub_ip')
+        fields['zmq_pub_ip'] = self.get_ip_address('sbi_network', SDNControllerServiceInstance, 'zmq_pub_ip')
+        fields['dp_comm_ip'] = self.get_ip_address('sbi_network', VSPGWUTenant, 'dp_comm_ip')
+        fields['cp_comm_ip'] = self.get_ip_address('nbi_network', VSPGWCTenant, 'cp_comm_ip')
+        fields['fpc_ip'] = self.get_ip_address('nbi_network', SDNControllerServiceInstance, 'fpc_ip')
+        fields['cp_nb_server_ip'] = self.get_ip_address('nbi_network', VSPGWCTenant, 'cp_nb_server_ip')
+
+        # for cp_config.cfg file
+        fields['s11_sgw_ip'] = self.get_ip_address('s11_network', VSPGWCTenant, 's11_sgw_ip')
+        fields['s1u_sgw_ip'] = self.get_ip_address('s1u_network', VSPGWUTenant, 's1u_sgw_ip')
+        fields['s11_mme_ip'] = self.get_ip_address('s11_network', VMMETenant, 's11_mme_ip')
+
+        return fields
+
+    def get_values_for_ng4t_wo_sdncontroller(self):
+        fields = {}
+        fields['scenario'] = "ng4t_without_sdncontroller"
+        # for interface.cfg file
+        fields['zmq_sub_ip'] = "127.0.0.1"
+        fields['zmq_pub_ip'] = "127.0.0.1"
+        fields['dp_comm_ip'] = self.get_ip_address('spgw_network', VSPGWUTenant, 'dp_comm_ip')
+        fields['cp_comm_ip'] = self.get_ip_address('spgw_network', VSPGWCTenant, 'cp_comm_ip')
+        fields['fpc_ip'] = "127.0.0.1"
+        fields['cp_nb_server_ip'] = "127.0.0.1"
+
+        # for cp_config.cfg file
+        fields['s11_sgw_ip'] = self.get_ip_address('s11_network', VSPGWCTenant, 's11_sgw_ip')
+        fields['s1u_sgw_ip'] = self.get_ip_address('s1u_network', VSPGWUTenant, 's1u_sgw_ip')
+        fields['s11_mme_ip'] = self.get_ip_address('s11_network', VMMETenant, 's11_mme_ip')
+
+        return fields
+
+    def get_values_for_spirent_w_sdncontroller(self):
+        fields = {}
+        fields['scenario'] = "spirent_with_sdncontroller"
+        # for interface.cfg file
+        fields['zmq_sub_ip'] = self.get_ip_address('sbi_network', SDNControllerServiceInstance, 'zmq_sub_ip')
+        fields['zmq_pub_ip'] = self.get_ip_address('sbi_network', SDNControllerServiceInstance, 'zmq_pub_ip')
+        fields['dp_comm_ip'] = self.get_ip_address('sbi_network', VSPGWUTenant, 'dp_comm_ip')
+        fields['cp_comm_ip'] = self.get_ip_address('nbi_network', VSPGWCTenant, 'cp_comm_ip')
+        fields['fpc_ip'] = self.get_ip_address('nbi_network', SDNControllerServiceInstance, 'fpc_ip')
+        fields['cp_nb_server_ip'] = self.get_ip_address('nbi_network', VSPGWCTenant, 'cp_nb_server_ip')
+
+        # for cp_config.cfg file
+        fields['s11_sgw_ip'] = self.get_ip_address('s11_network', VSPGWCTenant, 's11_sgw_ip')
+        fields['s1u_sgw_ip'] = self.get_ip_address('s1u_network', VSPGWUTenant, 's1u_sgw_ip')
+        fields['s11_mme_ip'] = self.get_ip_address('s11_network', VENBServiceInstance, 's11_mme_ip')
+
+        return fields
+
+    def get_values_for_spirent_wo_sdncontroller(self):
+        fields = {}
+        fields['scenario'] = "spirent_without_sdncontroller"
+        # for interface.cfg file
+        fields['zmq_sub_ip'] = "127.0.0.1"
+        fields['zmq_pub_ip'] = "127.0.0.1"
+        fields['dp_comm_ip'] = self.get_ip_address('spgw_network', VSPGWUTenant, 'dp_comm_ip')
+        fields['cp_comm_ip'] = self.get_ip_address('spgw_network', VSPGWCTenant, 'cp_comm_ip')
+        fields['fpc_ip'] = "127.0.0.1"
+        fields['cp_nb_server_ip'] = "127.0.0.1"
+
+        # for cp_config.cfg file
+        fields['s11_sgw_ip'] = self.get_ip_address('s11_network', VSPGWCTenant, 's11_sgw_ip')
+        fields['s1u_sgw_ip'] = self.get_ip_address('s1u_network', VSPGWUTenant, 's1u_sgw_ip')
+        fields['s11_mme_ip'] = self.get_ip_address('s11_network', VENBServiceInstance, 's11_mme_ip')
+
+        return fields
+
 
     def has_venb(self):
         # try get vMME instance
@@ -102,25 +162,62 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
 
         return True
 
+    def has_sdncontroller(self):
+        # try get vMME instance
+        try:
+            instance_id = self.get_instance_id(SDNControllerServiceInstance)
+        except Exception:
+            print 'cannot get SDNControllerServiceInstance'
+            return False
+
+        return True
+
+    def has_vspgwu(self):
+        # try get vMME instance
+        try:
+            instance_id = self.get_instance_id(VSPGWUTenant)
+        except Exception:
+            print 'cannot get VSPGWUTenant'
+            return False
+
+        return True
+
+    def has_internetemulator(self):
+        # try get vMME instance
+        try:
+            instance_id = self.get_instance_id(InternetEmulatorServiceInstance)
+        except Exception:
+            print 'cannot get InternetEmulatorServiceInstance'
+            return False
+
+        return True
+
 
     # Which scenario does it use among Spirent or NG4T?
     def get_scenario(self):
         # try get vENB instance: one of both Spirent and NG4T
         venb_flag = self.has_venb()
         vmme_flag = self.has_vmme()
+        sdncontroller_flag = self.has_sdncontroller()
+        vspgwu_flag = self.has_vspgwu()
+        internetemulator_flag = self.has_internetemulator()
 
-        if vmme_flag:
-            return 'ng4t'
-        else:
-            if venb_flag:
-                return 'spirent'
-            else:
-                return 'manual'
+        if vmme_flag and venb_flag and sdncontroller_flag and vspgwu_flag and internetemulator_flag:
+            return 'ng4t_with_sdncontroller'
 
+        if vmme_flag and venb_flag and (not sdncontroller_flag) and vspgwu_flag and internetemulator_flag:
+            return 'ng4t_without_sdncontroller'
+
+        if (not vmme_flag) and venb_flag and sdncontroller_flag and vspgwu_flag and (not internetemulator_flag):
+            return 'spirent_with_sdncontroller'
+
+        if (not vmme_flag) and venb_flag and (not sdncontroller_flag) and vspgwu_flag and (not internetemulator_flag):
+            return 'spirent_without_sdncontroller'
+
+        return 'manual'
+
+    # To get IP address
     def get_ip_address(self, network_name, service_instance, parameter):
-
-        if self.get_scenario() == 'manual':
-            return "manual"
 
         try:
             net_id = self.get_network_id(network_name)
