@@ -32,6 +32,7 @@
     - s11_mme_ip: {{ s11_mme_ip }}
     - s1u_sgw_ip: {{ s1u_sgw_ip }}
     - scenario: {{ scenario }}
+    - cpu_hexacode: "0x0e"
 
   roles:
     - interface_config
