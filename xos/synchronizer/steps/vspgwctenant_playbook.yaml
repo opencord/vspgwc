@@ -36,3 +36,4 @@
 
   roles:
     - interface_config
+    - build_and_run
