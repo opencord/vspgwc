@@ -38,52 +38,6 @@
     src=cp_config.cfg.j2
     dest="{{source_path}}/config/cp_config.cfg" owner=root group=root mode=755
 
-- name: change CPU hexacode in run.sh file
+- name: write flag for interface_config
   become: yes
-  template:
-    src=run.sh.j2
-    dest="{{source_path}}/cp/run.sh" owner=root group=root mode=755
-
-- name: set hugepage parameter
-  become: yes
-  shell: "echo vm.nr_hugepages=512 >> /etc/sysctl.conf"
-
-- name: adjust changed hugepage parameter
-  become: yes
-  shell: "sysctl -p"
-
-- name: make run with log file
-  become: yes
-  template:
-    src=run_with_log.sh.j2
-    dest="{{source_path}}/cp/run_with_log.sh" owner=root group=root mode=755
-
-# Must wait until vSPGW-U successfully runs ngic dp software
-# Must insert codes to wait until above
-# Following codes will be uncommented when vSPGWU playbook is completed
-#- name: wait until vSPGW-U runs successfully
-#  wait_for:
-#    timeout: 1800
-#    path: "{{ source_path }}/cp/finish_vspgwu_flag"
-#    msg: Timeout to wait that vSPGWU runs successfully
-
-# This part should be run after user plane (data plane) runs in vSPGW-U
-# If not, vSPGW-U and vSPGW-C will not be working well
-- name: build and run vspgwc
-  become: yes
-  shell: "{{ item }}"
-  args:
-    chdir: "{{ source_path }}/cp"
-  environment:
-    NG_CORE: "{{ source_path }}"
-    RTE_SDK: "{{ source_path }}/dpdk"
-    RTE_TARGET: "x86_64-native-linuxapp-gcc"
-    HYPERSCANDIR: "/root/ngic/hyperscan-4.1.0"
-  with_items:
-    - make clean
-    - make
-    - ./run_with_log.sh
-
-- name: write flag
-  become: yes
-  shell: "echo 1 > {{source_path}}/cp/finish_flag"
+  shell: "echo 1 > {{source_path}}/cp/finish_flag_interface_config"
