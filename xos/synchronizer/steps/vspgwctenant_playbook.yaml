@@ -33,7 +33,33 @@
     - s1u_sgw_ip: {{ s1u_sgw_ip }}
     - scenario: {{ scenario }}
     - cpu_hexacode: "0x0e"
-
+    - sgi_as_ip: {{ sgi_as_ip }}
+    - sgi_spgwu_ip: {{ sgi_spgwu_ip }}
+    - ip_addr_pool: "16.0.0.0"
+    - ip_pool_mask: "255.0.0.0"
+    - ip_pool_mask_int: "8"
   roles:
     - interface_config
     - build_and_run
+
+- hosts: localhost
+  vars:
+    - source_path: /root/ngic
+    - zmq_sub_ip: {{ zmq_sub_ip }}
+    - zmq_pub_ip: {{ zmq_pub_ip }}
+    - dp_comm_ip: {{ dp_comm_ip }}
+    - cp_comm_ip: {{ cp_comm_ip }}
+    - fpc_ip: {{ fpc_ip }}
+    - cp_nb_server_ip: {{ cp_nb_server_ip }}
+    - s11_sgw_ip: {{  s11_sgw_ip }}
+    - s11_mme_ip: {{ s11_mme_ip }}
+    - s1u_sgw_ip: {{ s1u_sgw_ip }}
+    - scenario: {{ scenario }}
+    - cpu_hexacode: "0x0e"
+    - sgi_as_ip: {{ sgi_as_ip }}
+    - sgi_spgwu_ip: {{ sgi_spgwu_ip }}
+    - ip_addr_pool: "16.0.0.0"
+    - ip_pool_mask: "255.0.0.0"
+    - ip_pool_mask_int: "8"
+  roles:
+      - onos_rule_setup
