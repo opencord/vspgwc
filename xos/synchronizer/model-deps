@@ -1,3 +1,5 @@
 {
-  ["Instance", "instance", ""]
+  "VSPGWCTenant": [
+        ["Instance", "instance", ""]
+  ]
 }
