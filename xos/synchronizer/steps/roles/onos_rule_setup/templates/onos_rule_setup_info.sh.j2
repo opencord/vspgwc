@@ -1,0 +1,150 @@
+#!/bin/bash
+
+#variable
+CMD=$1
+OPTION=$2
+
+SGI_AS={{ sgi_as_ip }}
+SGI_SPGWU={{ sgi_spgwu_ip }}
+UE_IP_POOL={{ ip_addr_pool }}
+UE_NETMASK={{ ip_pool_mask }}
+ONOS_ID="karaf"
+ONOS_PW="karaf"
+
+function get_head_node {
+	netstat -nr | awk '{if ($1 == "0.0.0.0") print $2}'
+}
+
+function get_hosts {
+	echo $(curl $(get_head_node)/vtn/onos/v1/hosts -u $ONOS_ID:$ONOS_PW)
+}
+
+function get_host {
+	INDEX=$1
+	get_hosts | awk '{split($0, RESULTS, "},{"); print RESULTS['$INDEX']}'
+}
+
+function num_hosts {
+	get_hosts | awk -F },{ '{print NF}'
+}
+
+function get_port_number {
+	IP_ADDR=$1
+	NUM_HOSTS=$(num_hosts)
+	for INDEX in `seq 1 $NUM_HOSTS`
+	do
+		TMP_IP_ADDR=$(get_host $INDEX | awk -F "," '{split($5, IP_RAW_RESULT, ":") ; print substr(IP_RAW_RESULT[2], 3, length(IP_RAW_RESULT[2])-4)}')
+		TMP_PORT_NUMBER=$(get_host $INDEX | awk -F "," '{split($7, PORT_RAW_RESULT, ":"); print substr(PORT_RAW_RESULT[2], 2, length(PORT_RAW_RESULT[2])-3)}')
+		if [ "$IP_ADDR" = "$TMP_IP_ADDR" ];
+		then
+			echo $TMP_PORT_NUMBER
+		fi
+	done
+}
+
+function get_mac_address {
+	IP_ADDR=$1
+	NUM_HOSTS=$(num_hosts)
+	for INDEX in `seq 1 $NUM_HOSTS`
+	do
+		TMP_IP_ADDR=$(get_host $INDEX | awk -F "," '{split($5, IP_RAW_RESULT, ":") ; print substr(IP_RAW_RESULT[2], 3, length(IP_RAW_RESULT[2])-4)}')
+		TMP_MAC_ADDR=$(get_host $INDEX | awk -F "," '{split($2, MAC_RAW_RESULT, "\":\"") ; print substr(MAC_RAW_RESULT[2], 1, length(MAC_RAW_RESULT[2])-1)}')
+		if [ "$IP_ADDR" = "$TMP_IP_ADDR" ];
+		then
+			echo $TMP_MAC_ADDR | tr '[A-Z]' '[a-z]'
+		fi
+	done
+}
+
+function get_switch_id {
+	IP_ADDR=$1
+	NUM_HOSTS=$(num_hosts)
+	for INDEX in `seq 1 $NUM_HOSTS`
+	do
+		TMP_IP_ADDR=$(get_host $INDEX | awk -F "," '{split($5, IP_RAW_RESULT, ":") ; print substr(IP_RAW_RESULT[2], 3, length(IP_RAW_RESULT[2])-4)}')
+		TMP_SWITCH_ID=$(get_host $INDEX | awk -F "," '{split($6, SW_RAW_RESULT, "\":\"") ; print substr(SW_RAW_RESULT[2], 1, length(SW_RAW_RESULT[2])-1)}')
+		if [ "$IP_ADDR" = "$TMP_IP_ADDR" ];
+		then
+			echo $TMP_SWITCH_ID
+		fi
+	done
+}
+
+
+function print_help {
+	echo "**Options**"
+	print_help_port
+	print_help_mac
+	print_help_ip
+	print_help_switch_id
+}
+
+function print_help_port {
+	echo "--port|-p <arg>: get OVS port number for <arg> device, one of {enb, spgwu}"
+}
+
+function print_help_mac {
+	echo "--mac|-m <arg>: get MAC address for <arg> device, one of {enb, spgwu}"
+}
+
+function print_help_ip {
+	echo "--ip|-i <arg>: get IP address for <arg> device, one of {enb, spgwu, onos}"
+}
+
+function print_help_switch_id {
+	echo "--sw|-s <arg>: get switch ID for <arg> device, one of {enb, spgwu}"
+}
+
+if [ "$CMD" == "-h" ] || [ "$CMD" == "--help" ]; then
+	print_help
+elif [ "$CMD" == "-p" ] || [ "$CMD" == "--port" ]; then
+	if [ "$OPTION" == "enb" ]; then
+		get_port_number $SGI_AS > enb_port
+		cat enb_port
+	elif [ "$OPTION" == "spgwu" ]; then
+		get_port_number $SGI_SPGWU > spgwu_port
+		cat spgwu_port
+	else
+		echo "Wrong argument"
+		print_help_port
+	fi
+elif [ "$CMD" == "-m" ] || [ "$CMD" == "--mac" ]; then
+	if [ "$OPTION" == "enb" ]; then
+		get_mac_address $SGI_AS > enb_mac
+		cat enb_mac
+	elif [ "$OPTION" == "spgwu" ]; then
+		get_mac_address $SGI_SPGWU > spgwu_mac
+		cat spgwu_mac
+	else
+		echo "Wrong argument"
+		print_help_mac
+	fi
+elif [ "$CMD" == "-i" ] || [ "$CMD" == "--ip" ]; then
+	if [ "$OPTION" == "enb" ]; then
+		echo $SGI_AS > enb_ip
+		cat enb_ip
+	elif [ "$OPTION" == "spgwu" ]; then
+		echo $SGI_SPGWU > spgwu_ip
+		cat spgwu_ip
+	elif [ "$OPTION" == "onos" ]; then
+		get_head_node > onos_ip
+		cat onos_ip
+	else
+		echo "Wrong argument"
+		print_help_ip
+	fi
+elif [ "$CMD" == "-s" ] || [ "$CMD" == "--sw" ]; then
+	if [ "$OPTION" == "enb" ]; then
+		get_switch_id $SGI_AS > enb_sw_id
+		cat enb_sw_id
+	elif [ "$OPTION" == "spgwu" ]; then
+		get_switch_id $SGI_SPGWU > spgwu_sw_id
+		cat spgwu_sw_id
+	else
+	    echo "Wrong argument"
+		print_help_switch_id
+	fi
+else
+	echo "Wrong command"
+	print_help
+fi
