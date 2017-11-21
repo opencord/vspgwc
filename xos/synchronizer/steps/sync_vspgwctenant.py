@@ -14,6 +14,7 @@
 
 import os
 import sys
+import time
 from django.db.models import Q, F
 from synchronizers.new_base.modelaccessor import *
 from synchronizers.new_base.SyncInstanceUsingAnsible import SyncInstanceUsingAnsible
@@ -39,14 +40,14 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
 
         scenario = self.get_scenario()
 
-        if scenario == 'ng4t_with_sdncontroller':
-            return self.get_values_for_ng4t_w_sdncontroller()
-        elif scenario == 'ng4t_without_sdncontroller':
-            return self.get_values_for_ng4t_wo_sdncontroller()
-        elif scenario == 'spirent_with_sdncontroller':
-            return self.get_values_for_spirent_w_sdncontroller()
-        elif scenario == 'spirent_without_sdncontroller':
-            return self.get_values_for_spirent_wo_sdncontroller()
+        if scenario == 'normal_scenario':
+            return self.get_values_for_normal_scenario()
+        elif scenario == 'normal_scenario_without_sdncontroller':
+            return self.get_values_for_normal_scenario_wo_sdncontroller()
+        elif scenario == 'emulator_scenario':
+            return self.get_values_for_emulator_scenario()
+        elif scenario == 'emulator_scenario_without_sdncontroller':
+            return self.get_values_for_emulator_scenario_wo_sdncontroller()
         else:
             return self.get_extra_attributes_for_manual()
 
@@ -67,11 +68,15 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
         fields['s11_mme_ip'] = "manual"
         fields['s1u_sgw_ip'] = "manual"
 
+        # for rules setup in ONOS
+        fields['sgi_as_ip'] = "manual"
+        fields['sgi_spgwu_ip'] = "manual"
+
         return fields
 
-    def get_values_for_ng4t_w_sdncontroller(self):
+    def get_values_for_normal_scenario(self):
         fields = {}
-        fields['scenario'] = "ng4t_with_sdncontroller"
+        fields['scenario'] = "normal_scenario"
         # for interface.cfg file
         fields['zmq_sub_ip'] = self.get_ip_address('sbi_network', SDNControllerServiceInstance, 'zmq_sub_ip')
         fields['zmq_pub_ip'] = self.get_ip_address('sbi_network', SDNControllerServiceInstance, 'zmq_pub_ip')
@@ -85,11 +90,15 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
         fields['s1u_sgw_ip'] = self.get_ip_address('s1u_network', VSPGWUTenant, 's1u_sgw_ip')
         fields['s11_mme_ip'] = self.get_ip_address('s11_network', VMMETenant, 's11_mme_ip')
 
+        # for rules setup in ONOS
+        fields['sgi_as_ip'] = self.get_ip_address('sgi_network', VENBServiceInstance, 'sgi_as_ip')
+        fields['sgi_spgwu_ip'] = self.get_ip_address('sgi_network', VSPGWUTenant, 'sgi_spgwu_ip')
+
         return fields
 
-    def get_values_for_ng4t_wo_sdncontroller(self):
+    def get_values_for_normal_scenario_wo_sdncontroller(self):
         fields = {}
-        fields['scenario'] = "ng4t_without_sdncontroller"
+        fields['scenario'] = "normal_scenario_without_sdncontroller"
         # for interface.cfg file
         fields['zmq_sub_ip'] = "127.0.0.1"
         fields['zmq_pub_ip'] = "127.0.0.1"
@@ -103,11 +112,15 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
         fields['s1u_sgw_ip'] = self.get_ip_address('s1u_network', VSPGWUTenant, 's1u_sgw_ip')
         fields['s11_mme_ip'] = self.get_ip_address('s11_network', VMMETenant, 's11_mme_ip')
 
+        # for rules setup in ONOS
+        fields['sgi_as_ip'] = self.get_ip_address('sgi_network', VENBServiceInstance, 'sgi_as_ip')
+        fields['sgi_spgwu_ip'] = self.get_ip_address('sgi_network', VSPGWUTenant, 'sgi_spgwu_ip')
+
         return fields
 
-    def get_values_for_spirent_w_sdncontroller(self):
+    def get_values_for_emulator_scenario(self):
         fields = {}
-        fields['scenario'] = "spirent_with_sdncontroller"
+        fields['scenario'] = "emulator_scenario"
         # for interface.cfg file
         fields['zmq_sub_ip'] = self.get_ip_address('sbi_network', SDNControllerServiceInstance, 'zmq_sub_ip')
         fields['zmq_pub_ip'] = self.get_ip_address('sbi_network', SDNControllerServiceInstance, 'zmq_pub_ip')
@@ -121,11 +134,15 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
         fields['s1u_sgw_ip'] = self.get_ip_address('s1u_network', VSPGWUTenant, 's1u_sgw_ip')
         fields['s11_mme_ip'] = self.get_ip_address('s11_network', VENBServiceInstance, 's11_mme_ip')
 
+        # for rules setup in ONOS
+        fields['sgi_as_ip'] = self.get_ip_address('sgi_network', VENBServiceInstance, 'sgi_as_ip')
+        fields['sgi_spgwu_ip'] = self.get_ip_address('sgi_network', VSPGWUTenant, 'sgi_spgwu_ip')
+
         return fields
 
-    def get_values_for_spirent_wo_sdncontroller(self):
+    def get_values_for_emulator_scenario_wo_sdncontroller(self):
         fields = {}
-        fields['scenario'] = "spirent_without_sdncontroller"
+        fields['scenario'] = "emulator_scenario_without_sdncontroller"
         # for interface.cfg file
         fields['zmq_sub_ip'] = "127.0.0.1"
         fields['zmq_pub_ip'] = "127.0.0.1"
@@ -138,6 +155,10 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
         fields['s11_sgw_ip'] = self.get_ip_address('s11_network', VSPGWCTenant, 's11_sgw_ip')
         fields['s1u_sgw_ip'] = self.get_ip_address('s1u_network', VSPGWUTenant, 's1u_sgw_ip')
         fields['s11_mme_ip'] = self.get_ip_address('s11_network', VENBServiceInstance, 's11_mme_ip')
+
+        # for rules setup in ONOS
+        fields['sgi_as_ip'] = self.get_ip_address('sgi_network', VENBServiceInstance, 'sgi_as_ip')
+        fields['sgi_spgwu_ip'] = self.get_ip_address('sgi_network', VSPGWUTenant, 'sgi_spgwu_ip')
 
         return fields
 
@@ -193,7 +214,6 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
         return True
 
 
-    # Which scenario does it use among Spirent or NG4T?
     def get_scenario(self):
         # try get vENB instance: one of both Spirent and NG4T
         venb_flag = self.has_venb()
@@ -202,31 +222,46 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
         vspgwu_flag = self.has_vspgwu()
         internetemulator_flag = self.has_internetemulator()
 
+        # wait until vspgwu and env are comming up
+        while (not vspgwu_flag):
+            print "wait -- vSPGWU has not been comming up"
+            time.sleep(1)
+            vspgwu_flag = self.has_vspgwu()
+
+        while (not venb_flag):
+            print "wait -- vENB has not been comming up"
+            time.sleep(1)
+            venb_flag = self.has_venb()
+
         if vmme_flag and venb_flag and sdncontroller_flag and vspgwu_flag and internetemulator_flag:
-            return 'ng4t_with_sdncontroller'
+            return 'normal_scenario'
 
         if vmme_flag and venb_flag and (not sdncontroller_flag) and vspgwu_flag and internetemulator_flag:
-            return 'ng4t_without_sdncontroller'
+            return 'normal_scenario_without_sdncontroller'
 
         if (not vmme_flag) and venb_flag and sdncontroller_flag and vspgwu_flag and (not internetemulator_flag):
-            return 'spirent_with_sdncontroller'
+            return 'emulator_scenario'
 
         if (not vmme_flag) and venb_flag and (not sdncontroller_flag) and vspgwu_flag and (not internetemulator_flag):
-            return 'spirent_without_sdncontroller'
+            return 'emulator_scenario_without_sdncontroller'
 
         return 'manual'
 
     # To get IP address
     def get_ip_address(self, network_name, service_instance, parameter):
 
-        try:
-            net_id = self.get_network_id(network_name)
-            ins_id = self.get_instance_id(service_instance)
-            ip_address = Port.objects.get(network_id=net_id, instance_id=ins_id).ip
+        condition = False
 
-        except Exception:
-            ip_address = "error"
-            print "get failed -- %s" % (parameter)
+        while (not condition):
+            try:
+                net_id = self.get_network_id(network_name)
+                ins_id = self.get_instance_id(service_instance)
+                ip_address = Port.objects.get(network_id=net_id, instance_id=ins_id).ip
+                condition = True
+            except Exception:
+                ip_address = "error"
+                print "get failed -- %s" % (parameter)
+                time.sleep(1)
 
         return ip_address
 
