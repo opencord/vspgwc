@@ -40,7 +40,7 @@
     - ip_pool_mask_int: "8"
   roles:
     - interface_config
-    - build_and_run
+    #- build_and_run #Temoporal comment out until epc-service is completed
 
 - hosts: localhost
   vars:
