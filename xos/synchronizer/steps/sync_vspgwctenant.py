@@ -203,17 +203,17 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
             "SDNControllerServiceInstance", o)
 
         if vmme_flag and venb_flag and sdncontroller_flag and vspgwu_flag and internetemulator_flag:
-            return 'ng4t_with_sdncontroller'
+            return 'normal_scenario'
 
         if vmme_flag and venb_flag and (not sdncontroller_flag) and vspgwu_flag and internetemulator_flag:
-            return 'ng4t_without_sdncontroller'
+            return 'normal_scenario_without_sdncontroller'
 
         if (not vmme_flag) and venb_flag and sdncontroller_flag and vspgwu_flag and (not internetemulator_flag):
-            return 'spirent_with_sdncontroller'
+            return 'emulator_scenario'
 
         if (not vmme_flag) and venb_flag and (not sdncontroller_flag) and vspgwu_flag and (
                 not internetemulator_flag):
-            return 'spirent_without_sdncontroller'
+            return 'emulator_scenario_without_sdncontroller'
 
         return 'manual'
 
@@ -253,7 +253,6 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
                     'Could not find service type in service graph', service_type=sitype, object=o)
                 raise Exception(
                     "Synchronization failed due to incomplete service graph")
-
         return peer_service
 
     # To get each network id

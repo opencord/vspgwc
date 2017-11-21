@@ -14,23 +14,6 @@
 
 ---
 
-# Set CPU Hexacode
-- name: change CPU hexacode in run.sh file
-  become: yes
-  template:
-    src=run.sh.j2
-    dest="{{source_path}}/cp/run.sh" owner=root group=root mode=755
-
-# Set size of Hugepage
-- name: set hugepage parameter
-  become: yes
-  shell: "echo vm.nr_hugepages=512 >> /etc/sysctl.conf"
-
-# Adjust the parameter for Hugepage
-- name: adjust changed hugepage parameter
-  become: yes
-  shell: "sysctl -p"
-
 # Make shell script to run vSPGW-C with log
 - name: make run with log file
   become: yes
