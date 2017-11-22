@@ -217,15 +217,11 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
         internetemulator_flag = self.has_internetemulator()
 
         # wait until vspgwu and env are comming up
-        while (not vspgwu_flag):
-            print "wait -- vSPGWU has not been comming up"
-            time.sleep(1)
-            vspgwu_flag = self.has_vspgwu()
-
-        while (not venb_flag):
-            print "wait -- vENB has not been comming up"
-            time.sleep(1)
-            venb_flag = self.has_venb()
+        if (not vspgwu_flag):
+            self.defer_sync("Waiting for vSPGWU to come up")
+            
+        if (not venb_flag):
+            self.defer_sync("Waiting for vENB to come up")
 
         if vmme_flag and venb_flag and sdncontroller_flag and vspgwu_flag and internetemulator_flag:
             return 'normal_scenario'
@@ -255,6 +251,7 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
             except Exception:
                 ip_address = "error"
                 self.log.error('Could not fetch parameter', parameter = parameter, network_name = network_name)
+                self.defer_sync("Waiting for parameters to become available")
 
         return ip_address
 
