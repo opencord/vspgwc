@@ -168,7 +168,7 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
         try:
             instance_id = self.get_instance_id(VENBServiceInstance)
         except Exception:
-            print 'cannot get VENBServiceInstance'
+            self.log.debug('VENBServiceInstance not found')
             return False
 
         return True
@@ -178,7 +178,7 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
         try:
             instance_id = self.get_instance_id(VMMETenant)
         except Exception:
-            print 'cannot get VMMETenant'
+            self.log.debug('VMMETenant not found')
             return False
 
         return True
@@ -188,7 +188,7 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
         try:
             instance_id = self.get_instance_id(SDNControllerServiceInstance)
         except Exception:
-            print 'cannot get SDNControllerServiceInstance'
+            self.log.debug('SDNControllerServiceInstance not found')
             return False
 
         return True
@@ -198,7 +198,7 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
         try:
             instance_id = self.get_instance_id(VSPGWUTenant)
         except Exception:
-            print 'cannot get VSPGWUTenant'
+            self.log.debug('VSPGWUTenant instance not found')
             return False
 
         return True
@@ -208,7 +208,7 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
         try:
             instance_id = self.get_instance_id(InternetEmulatorServiceInstance)
         except Exception:
-            print 'cannot get InternetEmulatorServiceInstance'
+            self.log.debug('InternetEmulatorServiceInstance not found')
             return False
 
         return True
@@ -260,8 +260,7 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
                 condition = True
             except Exception:
                 ip_address = "error"
-                print "get failed -- %s" % (parameter)
-                time.sleep(1)
+                self.log.error('Could not fetch parameter', parameter = parameter, network_name = network_name)
 
         return ip_address
 
