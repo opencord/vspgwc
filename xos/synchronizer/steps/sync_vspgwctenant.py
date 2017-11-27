@@ -256,25 +256,6 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
 
         return peer_service
 
-    # To get IP address
-    def get_ip_address_from_peer_service_instance(self, network_name, service_instance, parameter):
-        condition = False
-
-        while (not condition):
-            try:
-                net_id = self.get_network_id(network_name)
-                ins_id = self.get_instance_id(service_instance)
-                ip_address = Port.objects.get(
-                    network_id=net_id, instance_id=ins_id).ip
-                condition = True
-            except Exception:
-                ip_address = "error"
-                self.log.error('Could not fetch parameter',
-                               parameter=parameter, network_name=network_name)
-                self.defer_sync("Waiting for parameters to become available")
-
-        return ip_address
-
     # To get each network id
     def get_network_id(self, network_name):
         return Network.objects.get(name=network_name).id
