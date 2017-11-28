@@ -74,31 +74,31 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
         fields['scenario'] = "normal_scenario"
         # for interface.cfg file
         fields['zmq_sub_ip'] = self.get_ip_address_from_peer_service_instance(
-            'sbi_network', "SDNControllerServiceInstance", 'zmq_sub_ip')
+            'sbi_network', "SDNControllerServiceInstance", o, 'zmq_sub_ip')
         fields['zmq_pub_ip'] = self.get_ip_address_from_peer_service_instance(
-            'sbi_network', "SDNControllerServiceInstance", 'zmq_pub_ip')
+            'sbi_network', "SDNControllerServiceInstance", o, 'zmq_pub_ip')
         fields['dp_comm_ip'] = self.get_ip_address_from_peer_service_instance(
-            'sbi_network', "VSPGWUTenant", 'dp_comm_ip')
+            'sbi_network', "VSPGWUTenant", o, 'dp_comm_ip')
         fields['cp_comm_ip'] = self.get_ip_address_from_peer_service_instance_instance(
-            'nbi_network', o, 'cp_comm_ip')
+            'nbi_network', o, o, 'cp_comm_ip')
         fields['fpc_ip'] = self.get_ip_address_from_peer_service_instance(
-            'nbi_network', "SDNControllerServiceInstance", 'fpc_ip')
+            'nbi_network', "SDNControllerServiceInstance", o, 'fpc_ip')
         fields['cp_nb_server_ip'] = self.get_ip_address_from_peer_service_instance_instance(
-            'nbi_network', o, 'cp_nb_server_ip')
+            'nbi_network', o, o, 'cp_nb_server_ip')
 
         # for cp_config.cfg file
         fields['s11_sgw_ip'] = self.get_ip_address_from_peer_service_instance_instance(
-            's11_network', o, 's11_sgw_ip')
+            's11_network', o, o, 's11_sgw_ip')
         fields['s1u_sgw_ip'] = self.get_ip_address_from_peer_service_instance(
-            's1u_network', "VSPGWUTenant", 's1u_sgw_ip')
+            's1u_network', "VSPGWUTenant", o, 's1u_sgw_ip')
         fields['s11_mme_ip'] = self.get_ip_address_from_peer_service_instance(
-            's11_network', "VMMETenant", 's11_mme_ip')
+            's11_network', "VMMETenant", o, 's11_mme_ip')
 
         # for rules setup in ONOS
         fields['sgi_as_ip'] = self.get_ip_address_from_peer_service_instance(
-            'sgi_network', "VENBServiceInstance", 'sgi_as_ip')
+            'sgi_network', "VENBServiceInstance", o, 'sgi_as_ip')
         fields['sgi_spgwu_ip'] = self.get_ip_address_from_peer_service_instance(
-            'sgi_network', "VSPGWUTenant", 'sgi_spgwu_ip')
+            'sgi_network', "VSPGWUTenant", o, 'sgi_spgwu_ip')
 
         return fields
 
@@ -109,25 +109,25 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
         fields['zmq_sub_ip'] = "127.0.0.1"
         fields['zmq_pub_ip'] = "127.0.0.1"
         fields['dp_comm_ip'] = self.get_ip_address_from_peer_service_instance(
-            'spgw_network', "VSPGWUTenant", 'dp_comm_ip')
+            'spgw_network', "VSPGWUTenant", o, 'dp_comm_ip')
         fields['cp_comm_ip'] = self.get_ip_address_from_peer_service_instance_instance(
-            'spgw_network', o, 'cp_comm_ip')
+            'spgw_network', o, o, 'cp_comm_ip')
         fields['fpc_ip'] = "127.0.0.1"
         fields['cp_nb_server_ip'] = "127.0.0.1"
 
         # for cp_config.cfg file
         fields['s11_sgw_ip'] = self.get_ip_address_from_peer_service_instance_instance(
-            's11_network', o, 's11_sgw_ip')
+            's11_network', o, o, 's11_sgw_ip')
         fields['s1u_sgw_ip'] = self.get_ip_address_from_peer_service_instance(
-            's1u_network', "VSPGWUTenant", 's1u_sgw_ip')
+            's1u_network', "VSPGWUTenant", o, 's1u_sgw_ip')
         fields['s11_mme_ip'] = self.get_ip_address_from_peer_service_instance(
-            's11_network', "VMMETenant", 's11_mme_ip')
+            's11_network', "VMMETenant", o, 's11_mme_ip')
 
         # for rules setup in ONOS
         fields['sgi_as_ip'] = self.get_ip_address_from_peer_service_instance(
-            'sgi_network', "VENBServiceInstance", 'sgi_as_ip')
+            'sgi_network', "VENBServiceInstance", o, 'sgi_as_ip')
         fields['sgi_spgwu_ip'] = self.get_ip_address_from_peer_service_instance(
-            'sgi_network', "VSPGWUTenant", 'sgi_spgwu_ip')
+            'sgi_network', "VSPGWUTenant", o, 'sgi_spgwu_ip')
 
         return fields
 
@@ -136,31 +136,31 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
         fields['scenario'] = "emulator_scenario"
         # for interface.cfg file
         fields['zmq_sub_ip'] = self.get_ip_address_from_peer_service_instance(
-            'sbi_network', "SDNControllerServiceInstance", 'zmq_sub_ip')
+            'sbi_network', "SDNControllerServiceInstance", o, 'zmq_sub_ip')
         fields['zmq_pub_ip'] = self.get_ip_address_from_peer_service_instance(
-            'sbi_network', "SDNControllerServiceInstance", 'zmq_pub_ip')
+            'sbi_network', "SDNControllerServiceInstance", o, 'zmq_pub_ip')
         fields['dp_comm_ip'] = self.get_ip_address_from_peer_service_instance(
-            'sbi_network', "VSPGWUTenant", 'dp_comm_ip')
+            'sbi_network', "VSPGWUTenant", o, 'dp_comm_ip')
         fields['cp_comm_ip'] = self.get_ip_address_from_peer_service_instance_instance(
-            'nbi_network', o, 'cp_comm_ip')
+            'nbi_network', o, o, 'cp_comm_ip')
         fields['fpc_ip'] = self.get_ip_address_from_peer_service_instance(
-            'nbi_network', "SDNControllerServiceInstance", 'fpc_ip')
+            'nbi_network', "SDNControllerServiceInstance", o, 'fpc_ip')
         fields['cp_nb_server_ip'] = self.get_ip_address_from_peer_service_instance_instance(
-            'nbi_network', o, 'cp_nb_server_ip')
+            'nbi_network', o, o, 'cp_nb_server_ip')
 
         # for cp_config.cfg file
         fields['s11_sgw_ip'] = self.get_ip_address_from_peer_service_instance_instance(
-            's11_network', o, 's11_sgw_ip')
+            's11_network', o, o, 's11_sgw_ip')
         fields['s1u_sgw_ip'] = self.get_ip_address_from_peer_service_instance(
-            's1u_network', "VSPGWUTenant", 's1u_sgw_ip')
+            's1u_network', "VSPGWUTenant", o, 's1u_sgw_ip')
         fields['s11_mme_ip'] = self.get_ip_address_from_peer_service_instance(
-            's11_network', "VENBServiceInstance", 's11_mme_ip')
+            's11_network', "VENBServiceInstance", o, 's11_mme_ip')
 
         # for rules setup in ONOS
         fields['sgi_as_ip'] = self.get_ip_address_from_peer_service_instance(
-            'sgi_network', "VENBServiceInstance", 'sgi_as_ip')
+            'sgi_network', "VENBServiceInstance", o, 'sgi_as_ip')
         fields['sgi_spgwu_ip'] = self.get_ip_address_from_peer_service_instance(
-            'sgi_network', "VSPGWUTenant", 'sgi_spgwu_ip')
+            'sgi_network', "VSPGWUTenant", o, 'sgi_spgwu_ip')
 
         return fields
 
@@ -171,25 +171,25 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
         fields['zmq_sub_ip'] = "127.0.0.1"
         fields['zmq_pub_ip'] = "127.0.0.1"
         fields['dp_comm_ip'] = self.get_ip_address_from_peer_service_instance(
-            'spgw_network', "VSPGWUTenant", 'dp_comm_ip')
+            'spgw_network', "VSPGWUTenant", o, 'dp_comm_ip')
         fields['cp_comm_ip'] = self.get_ip_address_from_peer_service_instance_instance(
-            'spgw_network', o, 'cp_comm_ip')
+            'spgw_network', o, o, 'cp_comm_ip')
         fields['fpc_ip'] = "127.0.0.1"
         fields['cp_nb_server_ip'] = "127.0.0.1"
 
         # for cp_config.cfg file
         fields['s11_sgw_ip'] = self.get_ip_address_from_peer_service_instance_instance(
-            's11_network', o, 's11_sgw_ip')
+            's11_network', o, o, 's11_sgw_ip')
         fields['s1u_sgw_ip'] = self.get_ip_address_from_peer_service_instance(
-            's1u_network', "VSPGWUTenant", 's1u_sgw_ip')
+            's1u_network', "VSPGWUTenant", o, 's1u_sgw_ip')
         fields['s11_mme_ip'] = self.get_ip_address_from_peer_service_instance(
-            's11_network', "VENBServiceInstance", 's11_mme_ip')
+            's11_network', "VENBServiceInstance", o, 's11_mme_ip')
 
         # for rules setup in ONOS
         fields['sgi_as_ip'] = self.get_ip_address_from_peer_service_instance(
-            'sgi_network', "VENBServiceInstance", 'sgi_as_ip')
+            'sgi_network', "VENBServiceInstance", o, 'sgi_as_ip')
         fields['sgi_spgwu_ip'] = self.get_ip_address_from_peer_service_instance(
-            'sgi_network', "VSPGWUTenant", 'sgi_spgwu_ip')
+            'sgi_network', "VSPGWUTenant", o, 'sgi_spgwu_ip')
 
         return fields
 
@@ -219,19 +219,19 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
 
     def get_ip_address_from_peer_service_instance(self, network_name, sitype, o, parameter=None):
         peer_si = self.get_peer_serviceinstance_of_type(sitype, o)
-        return self.get_ip_address_for_peer_service_instance_instance(network_name, peer_si, parameter)
+        return self.get_ip_address_from_peer_service_instance_instance(network_name, peer_si, o, parameter)
 
-    def get_ip_address_from_peer_service_instance_instance(self, network_name, peer_si, parameter=None):
+    def get_ip_address_from_peer_service_instance_instance(self, network_name, peer_si, o, parameter=None):
         try:
             net_id = self.get_network_id(network_name)
-            ins_id = peer_si.instance_id
+            ins_id = peer_si.leaf_model.instance_id
             ip_address = Port.objects.get(
                 network_id=net_id, instance_id=ins_id).ip
         except Exception:
             self.log.error("Failed to fetch parameter",
                            parameter=parameter,
                            network_name=network_name)
-            self.defer_sync("Waiting for parameters to become available")
+            self.defer_sync(o, "Waiting for parameters to become available")
 
         return ip_address
 
@@ -241,19 +241,20 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
 
         try:
             peer_service = next(
-                p for p in prov_link_set if p.leaf_model_name == sitype)
+                p.provider_service_instance for p in prov_link_set if p.provider_service_instance.leaf_model_name == sitype)
         except StopIteration:
             sub_link_set = ServiceInstanceLink.objects.filter(
                 provider_service_instance_id=o.id)
             try:
                 peer_service = next(
-                    s for s in sub_link_set if s.leaf_model_name == sitype)
+                    s.subscriber_service_instance for s in sub_link_set if s.subscriber_service_instance.leaf_model_name == sitype)
             except StopIteration:
                 self.log.error(
                     'Could not find service type in service graph', service_type=sitype, object=o)
                 raise Exception(
                     "Synchronization failed due to incomplete service graph")
-        return peer_service
+
+        return peer_service 
 
     # To get each network id
     def get_network_id(self, network_name):
