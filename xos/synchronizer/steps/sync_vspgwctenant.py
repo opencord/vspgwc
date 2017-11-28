@@ -276,4 +276,4 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
                           serviceinstance=sitype)
             return False
 
-        return i.instance_id
+        return i.leaf_model.instance_id
