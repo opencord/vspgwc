@@ -1,6 +1,5 @@
 option name = "vspgwc";
 option app_label = "vspgwc";
-option kind = "vEPC";
 
 message VSPGWCService (Service){
     option verbose_name = "Virtual Serving PDN Gateway -- Control Plane Service";
