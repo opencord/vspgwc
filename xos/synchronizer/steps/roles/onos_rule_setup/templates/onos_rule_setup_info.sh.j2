@@ -1,4 +1,17 @@
 #!/bin/bash
+# Copyright 2017-present Open Networking Foundation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 #variable
 CMD=$1
@@ -11,6 +24,7 @@ UE_NETMASK={{ ip_pool_mask }}
 ONOS_ID="karaf"
 ONOS_PW="karaf"
 
+# To get IP address for Head Node (to access ONOS-VTN/fabric)
 function get_head_node {
 	netstat -nr | awk '{if ($1 == "0.0.0.0") print $2}'
 }
@@ -19,15 +33,51 @@ function get_hosts {
 	echo $(curl $(get_head_node)/vtn/onos/v1/hosts -u $ONOS_ID:$ONOS_PW)
 }
 
+function get_hosts_fabric {
+    echo $(curl $(get_head_node):8181/onos/v1/hosts -u $ONOS_ID:$ONOS_PW)
+}
+
 function get_host {
 	INDEX=$1
 	get_hosts | awk '{split($0, RESULTS, "},{"); print RESULTS['$INDEX']}'
 }
 
+function get_host_fabric {
+    INDEX=$1
+    get_hosts_fabric | awk '{split($0, RESULTS, "},{"); print RESULTS['$INDEX']}'
+}
 function num_hosts {
 	get_hosts | awk -F },{ '{print NF}'
 }
 
+function num_hosts_fabric {
+    get_hosts_fabric | awk -F },{ '{print NF}'
+}
+
+function get_ip_addr_fabric {
+    MAC_ADDR=$(get_mac_address_fabric $1)
+    NUM_HOSTS=$(num_hosts_fabric)
+    for INDEX in `seq 1 $NUM_HOSTS`
+    do
+        TMP_IP_ADDR=$(get_host_fabric $INDEX | awk -F "," '{split($5, IP_RAW_RESULT, ":") ; print substr(IP_RAW_RESULT[2], 3, length(IP_RAW_RESULT[2])-4)}')
+        TMP_MAC_ADDR=$(get_host_fabric $INDEX | awk -F "," '{split($2, MAC_RAW_RESULT, "\":\"") ; print substr(MAC_RAW_RESULT[2], 1, length(MAC_RAW_RESULT[2])-1)}')
+        if [ "$MAC_ADDR" = "$TMP_MAC_ADDR" ];
+        then
+            echo $TMP_IP_ADDR
+        fi
+    done
+}
+
+function get_mac_address_fabric {
+    SWITCH_ID=$1
+    MAC_CLASS_A=$(echo $SWITCH_ID | awk -F ":" '{print substr($2, length($2)-1, 2)}' | tr '[a-z]' '[A-Z]')
+    MAC_CLASS_B=$(echo $SWITCH_ID | awk -F ":" '{print substr($2, length($2)-3, 2)}' | tr '[a-z]' '[A-Z]')
+    MAC_CLASS_C=$(echo $SWITCH_ID | awk -F ":" '{print substr($2, length($2)-5, 2)}' | tr '[a-z]' '[A-Z]')
+    MAC_CLASS_D=$(echo $SWITCH_ID | awk -F ":" '{print substr($2, length($2)-7, 2)}' | tr '[a-z]' '[A-Z]')
+    MAC_CLASS_E=$(echo $SWITCH_ID | awk -F ":" '{print substr($2, length($2)-9, 2)}' | tr '[a-z]' '[A-Z]')
+    MAC_CLASS_F=$(echo $SWITCH_ID | awk -F ":" '{print substr($2, length($2)-11, 2)}' | tr '[a-z]' '[A-Z]')
+    echo $MAC_CLASS_F:$MAC_CLASS_E:$MAC_CLASS_D:$MAC_CLASS_C:$MAC_CLASS_B:$MAC_CLASS_A
+}
 function get_port_number {
 	IP_ADDR=$1
 	NUM_HOSTS=$(num_hosts)
@@ -77,6 +127,7 @@ function print_help {
 	print_help_mac
 	print_help_ip
 	print_help_switch_id
+	print_help_ip_switch
 }
 
 function print_help_port {
@@ -95,6 +146,9 @@ function print_help_switch_id {
 	echo "--sw|-s <arg>: get switch ID for <arg> device, one of {enb, spgwu}"
 }
 
+function print_help_ip_switch {
+    echo "--devip|-d <arg>: get IP address of the switch connected with <arg> device, one of {enb, spgwu}"
+}
 if [ "$CMD" == "-h" ] || [ "$CMD" == "--help" ]; then
 	print_help
 elif [ "$CMD" == "-p" ] || [ "$CMD" == "--port" ]; then
@@ -143,6 +197,19 @@ elif [ "$CMD" == "-s" ] || [ "$CMD" == "--sw" ]; then
 	else
 	    echo "Wrong argument"
 		print_help_switch_id
+	fi
+elif [ "$CMD" == "-d" ] || [ "$CMD" == "--devip" ]; then
+	if [ "$OPTION" == "enb" ]; then
+		DPID=$(get_switch_id $SGI_AS)
+		get_ip_addr_fabric $DPID > enb_sw_ip
+		cat enb_sw_ip
+	elif [ "$OPTION" == "spgwu" ]; then
+		DPID=$(get_switch_id $SGI_SPGWU)
+		get_ip_addr_fabric $DPID > spgwu_sw_ip
+		cat spgwu_sw_ip
+	else
+	    echo "Wrong argument"
+		print_help_ip_switch
 	fi
 else
 	echo "Wrong command"

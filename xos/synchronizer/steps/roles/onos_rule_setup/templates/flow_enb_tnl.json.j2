@@ -1,0 +1,40 @@
+{
+   "deviceId":"{{ spgwu_sw_id }}",
+   "isPermanent":true,
+   "priority":6001,
+   "selector":{
+      "criteria":[
+         {
+            "ethType":"0x800",
+            "type":"ETH_TYPE"
+         },
+         {
+            "ip":"{{ ip_addr_pool }}/{{ ip_pool_mask_int }}",
+            "type":"IPV4_SRC"
+         }
+      ]
+   },
+   "tableId":0,
+   "timeout":0,
+   "treatment":{
+      "instructions":[
+         {
+            "type": "L2MODIFICATION",
+            "subtype": "TUNNEL_ID",
+            "tunnelId": 2000
+         },
+         {
+            "type": "EXTENSION",
+            "deviceId":"{{ spgwu_sw_id }}",
+            "extension": {
+                "type":"0",
+                "tunnelDst": "{{ enb_sw_ip }}"
+            }
+         },
+         {
+            "port":"1",
+            "type":"OUTPUT"
+         }
+      ]
+   }
+}
