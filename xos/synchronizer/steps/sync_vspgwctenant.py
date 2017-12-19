@@ -45,6 +45,10 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
             return self.get_values_for_emulator_scenario(o)
         elif scenario == 'emulator_scenario_without_sdncontroller':
             return self.get_values_for_emulator_scenario_wo_sdncontroller(o)
+        elif scenario == 'hardware_scenario':
+            return self.get_values_for_hardware_scenario(o)
+        elif scenario == 'hardware_scenario_without_sdncontroller':
+            return self.get_values_for_hardware_scenario_wo_sdncontroller(o)
         else:
             return self.get_extra_attributes_for_manual(o)
 
@@ -195,6 +199,69 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
 
         return fields
 
+    def get_values_for_hardware_scenario(self, o):
+        fields = {}
+        fields['scenario'] = "hardware_scenario"
+
+        # for interface.cfg file
+        fields['zmq_sub_ip'] = self.get_ip_address_from_peer_service_instance(
+            'sbi_network', "SDNControllerServiceInstance", o, 'zmq_sub_ip')
+        fields['zmq_pub_ip'] = self.get_ip_address_from_peer_service_instance(
+            'sbi_network', "SDNControllerServiceInstance", o, 'zmq_pub_ip')
+        fields['dp_comm_ip'] = self.get_ip_address_from_peer_service_instance(
+            'sbi_network', "VSPGWUTenant", o, 'dp_comm_ip')
+        fields['cp_comm_ip'] = self.get_ip_address_from_peer_service_instance_instance(
+            'nbi_network', o, o, 'cp_comm_ip')
+        fields['fpc_ip'] = self.get_ip_address_from_peer_service_instance(
+            'nbi_network', "SDNControllerServiceInstance", o, 'fpc_ip')
+        fields['cp_nb_server_ip'] = self.get_ip_address_from_peer_service_instance_instance(
+            'nbi_network', o, o, 'cp_nb_server_ip')
+
+        # for cp_config.cfg file
+        fields['s11_sgw_ip'] = self.get_ip_address_from_peer_service_instance_instance(
+            's11_network', o, o, 's11_sgw_ip')
+        fields['s1u_sgw_ip'] = self.get_ip_address_from_peer_service_instance(
+            'flat_network_s1u', "VSPGWUTenant", o, 's1u_sgw_ip')
+        fields['s11_mme_ip'] = self.get_ip_address_from_peer_service_instance(
+            's11_network', "VMMETenant", o, 's11_mme_ip')
+
+        # for rules setup in ONOS
+        fields['sgi_as_ip'] = "manual"
+        fields['sgi_spgwu_ip'] = self.get_ip_address_from_peer_service_instance(
+            'sgi_network', "VSPGWUTenant", o, 'sgi_spgwu_ip')
+
+        return fields
+
+    def get_values_for_hardware_scenario_wo_sdncontroller(self, o):
+        fields = {}
+        fields['scenario'] = "hardware_scenario_without_sdncontroller"
+
+        # for interface.cfg file
+        fields['zmq_sub_ip'] = "127.0.0.1"
+        fields['zmq_pub_ip'] = "127.0.0.1"
+        fields['dp_comm_ip'] = self.get_ip_address_from_peer_service_instance(
+            'spgw_network', "VSPGWUTenant", o, 'dp_comm_ip')
+        fields['cp_comm_ip'] = self.get_ip_address_from_peer_service_instance_instance(
+            'spgw_network', o, o, 'cp_comm_ip')
+        fields['fpc_ip'] = "127.0.0.1"
+        fields['cp_nb_server_ip'] = "127.0.0.1"
+
+        # for cp_config.cfg file
+        fields['s11_sgw_ip'] = self.get_ip_address_from_peer_service_instance_instance(
+            's11_network', o, o, 's11_sgw_ip')
+        fields['s1u_sgw_ip'] = self.get_ip_address_from_peer_service_instance(
+            'flat_network_s1u', "VSPGWUTenant", o, 's1u_sgw_ip')
+        fields['s11_mme_ip'] = self.get_ip_address_from_peer_service_instance(
+            's11_network', "VMMETenant", o, 's11_mme_ip')
+
+        # for rules setup in ONOS
+        fields['sgi_as_ip'] = "manual"
+        fields['sgi_spgwu_ip'] = self.get_ip_address_from_peer_service_instance(
+            'sgi_network', "VSPGWUTenant", o, 'sgi_spgwu_ip')
+
+        return fields
+
+
     def get_scenario(self, o):
         venb_flag = self.has_instance("VENBServiceInstance", o)
         vmme_flag = self.has_instance("VMMETenant", o)
@@ -216,6 +283,12 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
         if (not vmme_flag) and venb_flag and (not sdncontroller_flag) and vspgwu_flag and (
                 not internetemulator_flag):
             return 'emulator_scenario_without_sdncontroller'
+
+        if vmme_flag and sdncontroller_flag and vspgwu_flag and (not internetemulator_flag):
+            return 'hardware_scenario'
+
+        if vmme_flag and (not sdncontroller_flag) and vspgwu_flag and (not internetemulator_flag):
+            return 'hardware_scenario_without_sdncontroller'
 
         return 'manual'
 
