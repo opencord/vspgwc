@@ -22,7 +22,7 @@
   become: yes
   template:
     src=interface.cfg.j2
-    dest="{{source_path}}/config/interface.cfg" owner=root group=root mode=755
+    dest="{{source_path_4_1}}/config/interface.cfg" owner=root group=root mode=755
 
 - name: get date
   shell: date +"%Y-%m-%d_%H-%M"
@@ -36,8 +36,8 @@
   become: yes
   template:
     src=cp_config.cfg.j2
-    dest="{{source_path}}/config/cp_config.cfg" owner=root group=root mode=755
+    dest="{{source_path_4_1}}/config/cp_config.cfg" owner=root group=root mode=755
 
 - name: write flag for interface_config
   become: yes
-  shell: "echo 1 > {{source_path}}/cp/finish_flag_interface_config"
+  shell: "echo 1 > {{source_path_4_1}}/cp/finish_flag_interface_config"

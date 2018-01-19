@@ -37,25 +37,18 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
 
         scenario = self.get_scenario(o)
 
-        if scenario == 'normal_scenario':
-            return self.get_values_for_normal_scenario(o)
-        elif scenario == 'normal_scenario_without_sdncontroller':
-            return self.get_values_for_normal_scenario_wo_sdncontroller(o)
-        elif scenario == 'emulator_scenario':
-            return self.get_values_for_emulator_scenario(o)
-        elif scenario == 'emulator_scenario_without_sdncontroller':
-            return self.get_values_for_emulator_scenario_wo_sdncontroller(o)
-        elif scenario == 'hardware_scenario':
-            return self.get_values_for_hardware_scenario(o)
-        elif scenario == 'hardware_scenario_without_sdncontroller':
-            return self.get_values_for_hardware_scenario_wo_sdncontroller(o)
+        if scenario == 'cord_4_1_scenario':
+            return self.get_values_for_CORD_4_1(o)
+        elif scenario == 'cord_5_0_scenario':
+            return self.get_values_for_CORD_5_0(o)
         else:
             return self.get_extra_attributes_for_manual(o)
 
     # fields for manual case
     def get_extra_attributes_for_manual(self, o):
         fields = {}
-        fields['scenario'] = self.get_scenario(o)
+        fields['scenario'] = "manual"
+        fields['cord_version'] = "manual"
         # for interface.cfg file
         fields['zmq_sub_ip'] = "manual"
         fields['zmq_pub_ip'] = "manual"
@@ -75,104 +68,10 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
 
         return fields
 
-    def get_values_for_normal_scenario(self, o):
+    def get_values_for_CORD_4_1(self, o):
         fields = {}
-        fields['scenario'] = "normal_scenario"
-        # for interface.cfg file
-        fields['zmq_sub_ip'] = self.get_ip_address_from_peer_service_instance(
-            'sbi_network', "SDNControllerServiceInstance", o, 'zmq_sub_ip')
-        fields['zmq_pub_ip'] = self.get_ip_address_from_peer_service_instance(
-            'sbi_network', "SDNControllerServiceInstance", o, 'zmq_pub_ip')
-        fields['dp_comm_ip'] = self.get_ip_address_from_peer_service_instance(
-            'sbi_network', "VSPGWUTenant", o, 'dp_comm_ip')
-        fields['cp_comm_ip'] = self.get_ip_address_from_peer_service_instance_instance(
-            'nbi_network', o, o, 'cp_comm_ip')
-        fields['fpc_ip'] = self.get_ip_address_from_peer_service_instance(
-            'nbi_network', "SDNControllerServiceInstance", o, 'fpc_ip')
-        fields['cp_nb_server_ip'] = self.get_ip_address_from_peer_service_instance_instance(
-            'nbi_network', o, o, 'cp_nb_server_ip')
-
-        # for cp_config.cfg file
-        fields['s11_sgw_ip'] = self.get_ip_address_from_peer_service_instance_instance(
-            's11_network', o, o, 's11_sgw_ip')
-        fields['s1u_sgw_ip'] = self.get_ip_address_from_peer_service_instance(
-            's1u_network', "VSPGWUTenant", o, 's1u_sgw_ip')
-        fields['s11_mme_ip'] = self.get_ip_address_from_peer_service_instance(
-            's11_network', "VMMETenant", o, 's11_mme_ip')
-
-        # for rules setup in ONOS
-        fields['sgi_as_ip'] = self.get_ip_address_from_peer_service_instance(
-            'sgi_network', "VENBServiceInstance", o, 'sgi_as_ip')
-        fields['sgi_spgwu_ip'] = self.get_ip_address_from_peer_service_instance(
-            'sgi_network', "VSPGWUTenant", o, 'sgi_spgwu_ip')
-
-        return fields
-
-    def get_values_for_normal_scenario_wo_sdncontroller(self, o):
-        fields = {}
-        fields['scenario'] = "normal_scenario_without_sdncontroller"
-        # for interface.cfg file
-        fields['zmq_sub_ip'] = "127.0.0.1"
-        fields['zmq_pub_ip'] = "127.0.0.1"
-        fields['dp_comm_ip'] = self.get_ip_address_from_peer_service_instance(
-            'spgw_network', "VSPGWUTenant", o, 'dp_comm_ip')
-        fields['cp_comm_ip'] = self.get_ip_address_from_peer_service_instance_instance(
-            'spgw_network', o, o, 'cp_comm_ip')
-        fields['fpc_ip'] = "127.0.0.1"
-        fields['cp_nb_server_ip'] = "127.0.0.1"
-
-        # for cp_config.cfg file
-        fields['s11_sgw_ip'] = self.get_ip_address_from_peer_service_instance_instance(
-            's11_network', o, o, 's11_sgw_ip')
-        fields['s1u_sgw_ip'] = self.get_ip_address_from_peer_service_instance(
-            's1u_network', "VSPGWUTenant", o, 's1u_sgw_ip')
-        fields['s11_mme_ip'] = self.get_ip_address_from_peer_service_instance(
-            's11_network', "VMMETenant", o, 's11_mme_ip')
-
-        # for rules setup in ONOS
-        fields['sgi_as_ip'] = self.get_ip_address_from_peer_service_instance(
-            'sgi_network', "VENBServiceInstance", o, 'sgi_as_ip')
-        fields['sgi_spgwu_ip'] = self.get_ip_address_from_peer_service_instance(
-            'sgi_network', "VSPGWUTenant", o, 'sgi_spgwu_ip')
-
-        return fields
-
-    def get_values_for_emulator_scenario(self, o):
-        fields = {}
-        fields['scenario'] = "emulator_scenario"
-        # for interface.cfg file
-        fields['zmq_sub_ip'] = self.get_ip_address_from_peer_service_instance(
-            'sbi_network', "SDNControllerServiceInstance", o, 'zmq_sub_ip')
-        fields['zmq_pub_ip'] = self.get_ip_address_from_peer_service_instance(
-            'sbi_network', "SDNControllerServiceInstance", o, 'zmq_pub_ip')
-        fields['dp_comm_ip'] = self.get_ip_address_from_peer_service_instance(
-            'sbi_network', "VSPGWUTenant", o, 'dp_comm_ip')
-        fields['cp_comm_ip'] = self.get_ip_address_from_peer_service_instance_instance(
-            'nbi_network', o, o, 'cp_comm_ip')
-        fields['fpc_ip'] = self.get_ip_address_from_peer_service_instance(
-            'nbi_network', "SDNControllerServiceInstance", o, 'fpc_ip')
-        fields['cp_nb_server_ip'] = self.get_ip_address_from_peer_service_instance_instance(
-            'nbi_network', o, o, 'cp_nb_server_ip')
-
-        # for cp_config.cfg file
-        fields['s11_sgw_ip'] = self.get_ip_address_from_peer_service_instance_instance(
-            's11_network', o, o, 's11_sgw_ip')
-        fields['s1u_sgw_ip'] = self.get_ip_address_from_peer_service_instance(
-            's1u_network', "VSPGWUTenant", o, 's1u_sgw_ip')
-        fields['s11_mme_ip'] = self.get_ip_address_from_peer_service_instance(
-            's11_network', "VENBServiceInstance", o, 's11_mme_ip')
-
-        # for rules setup in ONOS
-        fields['sgi_as_ip'] = self.get_ip_address_from_peer_service_instance(
-            'sgi_network', "VENBServiceInstance", o, 'sgi_as_ip')
-        fields['sgi_spgwu_ip'] = self.get_ip_address_from_peer_service_instance(
-            'sgi_network', "VSPGWUTenant", o, 'sgi_spgwu_ip')
-
-        return fields
-
-    def get_values_for_emulator_scenario_wo_sdncontroller(self, o):
-        fields = {}
-        fields['scenario'] = "emulator_scenario_without_sdncontroller"
+        fields['cord_version'] = "4.1"
+        fields['scenario'] = "cord_4_1_scenario"
         # for interface.cfg file
         fields['zmq_sub_ip'] = "127.0.0.1"
         fields['zmq_pub_ip'] = "127.0.0.1"
@@ -199,42 +98,10 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
 
         return fields
 
-    def get_values_for_hardware_scenario(self, o):
+    def get_values_for_CORD_5_0(self, o):
         fields = {}
-        fields['scenario'] = "hardware_scenario"
-
-        # for interface.cfg file
-        fields['zmq_sub_ip'] = self.get_ip_address_from_peer_service_instance(
-            'sbi_network', "SDNControllerServiceInstance", o, 'zmq_sub_ip')
-        fields['zmq_pub_ip'] = self.get_ip_address_from_peer_service_instance(
-            'sbi_network', "SDNControllerServiceInstance", o, 'zmq_pub_ip')
-        fields['dp_comm_ip'] = self.get_ip_address_from_peer_service_instance(
-            'sbi_network', "VSPGWUTenant", o, 'dp_comm_ip')
-        fields['cp_comm_ip'] = self.get_ip_address_from_peer_service_instance_instance(
-            'nbi_network', o, o, 'cp_comm_ip')
-        fields['fpc_ip'] = self.get_ip_address_from_peer_service_instance(
-            'nbi_network', "SDNControllerServiceInstance", o, 'fpc_ip')
-        fields['cp_nb_server_ip'] = self.get_ip_address_from_peer_service_instance_instance(
-            'nbi_network', o, o, 'cp_nb_server_ip')
-
-        # for cp_config.cfg file
-        fields['s11_sgw_ip'] = self.get_ip_address_from_peer_service_instance_instance(
-            's11_network', o, o, 's11_sgw_ip')
-        fields['s1u_sgw_ip'] = self.get_ip_address_from_peer_service_instance(
-            'flat_network_s1u', "VSPGWUTenant", o, 's1u_sgw_ip')
-        fields['s11_mme_ip'] = self.get_ip_address_from_peer_service_instance(
-            's11_network', "VMMETenant", o, 's11_mme_ip')
-
-        # for rules setup in ONOS
-        fields['sgi_as_ip'] = "manual"
-        fields['sgi_spgwu_ip'] = self.get_ip_address_from_peer_service_instance(
-            'sgi_network', "VSPGWUTenant", o, 'sgi_spgwu_ip')
-
-        return fields
-
-    def get_values_for_hardware_scenario_wo_sdncontroller(self, o):
-        fields = {}
-        fields['scenario'] = "hardware_scenario_without_sdncontroller"
+        fields['cord_version'] = "5.0"
+        fields['scenario'] = "cord_5_0_scenario"
 
         # for interface.cfg file
         fields['zmq_sub_ip'] = "127.0.0.1"
@@ -250,12 +117,17 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
         fields['s11_sgw_ip'] = self.get_ip_address_from_peer_service_instance_instance(
             's11_network', o, o, 's11_sgw_ip')
         fields['s1u_sgw_ip'] = self.get_ip_address_from_peer_service_instance(
-            'flat_network_s1u', "VSPGWUTenant", o, 's1u_sgw_ip')
+            's1u_network', "VSPGWUTenant", o, 's1u_sgw_ip')
         fields['s11_mme_ip'] = self.get_ip_address_from_peer_service_instance(
             's11_network', "VMMETenant", o, 's11_mme_ip')
 
         # for rules setup in ONOS
-        fields['sgi_as_ip'] = "manual"
+        internetemulator_flag = self.has_instance("InternetEmulatorServiceInstance", o)
+        if (internetemulator_flag):
+            fields['sgi_as_ip'] = self.get_ip_address_from_peer_service_instance(
+                'sgi_network', "InternetEmulatorServiceInstance", o, 'sgi_as_ip')
+        else:
+            fields['sgi_as_ip'] = o.appserver_ip_addr
         fields['sgi_spgwu_ip'] = self.get_ip_address_from_peer_service_instance(
             'sgi_network', "VSPGWUTenant", o, 'sgi_spgwu_ip')
 
@@ -269,26 +141,27 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
             "SDNControllerServiceInstance", o)
         vspgwu_flag = self.has_instance("VSPGWUTenant", o)
         internetemulator_flag = self.has_instance(
-            "SDNControllerServiceInstance", o)
+            "InternetEmulatorServiceInstance", o)
+        vhss_flag = self.has_instance("VHSSTenant", o)
+        hssdb_flag = self.has_instance("HSSDBServiceInstance", o)
 
-        if vmme_flag and venb_flag and sdncontroller_flag and vspgwu_flag and internetemulator_flag:
-            return 'normal_scenario'
+        if (o.blueprint == "build") or (o.blueprint == "MCORD 4.1"):
+            if not venb_flag:
+                self.defer_sync(o, "Waiting for eNB image to become available")
+            if not vspgwu_flag:
+                self.defer_sync(o, "Waiting for SPGWU image to become available")
+            return 'cord_4_1_scenario'
 
-        if vmme_flag and venb_flag and (not sdncontroller_flag) and vspgwu_flag and internetemulator_flag:
-            return 'normal_scenario_without_sdncontroller'
-
-        if (not vmme_flag) and venb_flag and sdncontroller_flag and vspgwu_flag and (not internetemulator_flag):
-            return 'emulator_scenario'
-
-        if (not vmme_flag) and venb_flag and (not sdncontroller_flag) and vspgwu_flag and (
-                not internetemulator_flag):
-            return 'emulator_scenario_without_sdncontroller'
-
-        if vmme_flag and sdncontroller_flag and vspgwu_flag and (not internetemulator_flag):
-            return 'hardware_scenario'
-
-        if vmme_flag and (not sdncontroller_flag) and vspgwu_flag and (not internetemulator_flag):
-            return 'hardware_scenario_without_sdncontroller'
+        if (o.blueprint == "mcord_5") or (o.blueprint == "MCORD 5"):
+            if not hssdb_flag:
+                self.defer_sync(o, "Waiting for HSS_DB image to become available")
+            if not vhss_flag:
+                self.defer_sync(o, "Waiting for vHSS image to become available")
+            if not vmme_flag:
+                self.defer_sync(o, "Waiting for vMME image to become available")
+            if not vspgwu_flag:
+                self.defer_sync(o, "Waiting for vSPGWU image to become available")
+            return 'cord_5_0_scenario'
 
         return 'manual'
 

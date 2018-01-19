@@ -19,16 +19,7 @@
   become: yes
   template:
     src=run_with_log.sh.j2
-    dest="{{source_path}}/cp/run_with_log.sh" owner=root group=root mode=755
-
-# Must wait until vSPGW-U successfully runs ngic dp software
-# Must insert codes to wait until above
-# Following codes will be uncommented when vSPGWU playbook is completed
-#- name: wait until vSPGW-U runs successfully
-#  wait_for:
-#    timeout: 1800
-#    path: "{{ source_path }}/cp/finish_vspgwu_flag"
-#    msg: Timeout to wait that vSPGWU runs successfully
+    dest="{{source_path_4_1}}/cp/run_with_log.sh" owner=root group=root mode=755
 
 # This part should be run after user plane (data plane) runs in vSPGW-U
 # If not, vSPGW-U and vSPGW-C will not be working well
@@ -36,12 +27,12 @@
   become: yes
   shell: "{{ item }}"
   args:
-    chdir: "{{ source_path }}/cp"
+    chdir: "{{ source_path_4_1 }}/cp"
   environment:
-    NG_CORE: "{{ source_path }}"
-    RTE_SDK: "{{ source_path }}/dpdk"
+    NG_CORE: "{{ source_path_4_1 }}"
+    RTE_SDK: "{{ source_path_4_1 }}/dpdk"
     RTE_TARGET: "x86_64-native-linuxapp-gcc"
-    HYPERSCANDIR: "/root/ngic/hyperscan-4.1.0"
+    HYPERSCANDIR: "{{ source_path_4_1 }}/hyperscan-4.1.0"
   with_items:
     - make clean
     - make
@@ -50,4 +41,4 @@
 # Finish
 - name: write flag
   become: yes
-  shell: "echo 1 > {{source_path}}/cp/finish_flag_build_and_run"
+  shell: "echo 1 > {{source_path_4_1}}/cp/finish_flag_build_and_run"
