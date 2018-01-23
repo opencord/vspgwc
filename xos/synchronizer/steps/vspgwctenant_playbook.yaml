@@ -41,10 +41,10 @@
     - ip_pool_mask_int: "8"
     - cord_version: {{ cord_version }}
   roles:
-    - { role: interface_config_4_1, when: cord_version == "4.1" }
-    - { role: build_and_run_4_1, when: cord_version == "4.1" }
-    - { role: interface_config_5_0, when: cord_version == "5.0" }
-    - { role: build_and_run_5_0, when: cord_version == "5.0" }
+    - { role: interface_config_4_1, when: cord_version == 4.1 }
+    - { role: build_and_run_4_1, when: cord_version == 4.1 }
+    - { role: interface_config_5_0, when: cord_version == 5.0 }
+    - { role: build_and_run_5_0, when: cord_version == 5.0 }
 
 - hosts: localhost
   vars:
