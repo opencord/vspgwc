@@ -20,3 +20,28 @@ dependency_graph: "/opt/xos/synchronizers/vspgwc/model-deps"
 steps_dir: "/opt/xos/synchronizers/vspgwc/steps"
 sys_dir: "/opt/xos/synchronizers/vspgwc/sys"
 model_policies_dir: "/opt/xos/synchronizers/vspgwc/model_policies"
+blueprints:
+  - name: cord_5_0_blueprint
+    graph:
+      - name: VMMETenant
+        links:
+      - name: VSPGWCTenant
+        links:
+          - name: VMMETenant
+          - name: VSPGWUTenant
+      - name: VSPGWUTenant
+      - name: VHSSTenant
+        links:
+          - name: HSSDBServiceInstance
+      - name: HSSDBServiceInstance
+  - name: cord_4_1_blueprint
+    graph:
+      - name: VSPGWUTenant
+        links:
+          - name: VENBServiceInstance
+      - name: VENBServiceInstance
+      - name: VSPGWCTenant
+        links:
+          - name: VENBServiceInstance
+          - name: VSPGWUTenant
+
