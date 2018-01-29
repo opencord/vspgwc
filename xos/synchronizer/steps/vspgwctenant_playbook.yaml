@@ -32,7 +32,7 @@
     - s11_sgw_ip: {{  s11_sgw_ip }}
     - s11_mme_ip: {{ s11_mme_ip }}
     - s1u_sgw_ip: {{ s1u_sgw_ip }}
-    - scenario: {{ scenario }}
+    - scenario: {{ blueprint }}
     - cpu_hexacode: "0x0e"
     - sgi_as_ip: {{ sgi_as_ip }}
     - sgi_spgwu_ip: {{ sgi_spgwu_ip }}
