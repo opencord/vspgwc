@@ -25,6 +25,7 @@ blueprints:
     graph:
       - name: VMMETenant
         links:
+          - name: VHSSTenant
       - name: VSPGWCTenant
         links:
           - name: VMMETenant
@@ -44,4 +45,16 @@ blueprints:
         links:
           - name: VENBServiceInstance
           - name: VSPGWUTenant
+  - name: cord_5_p4_blueprint
+    graph:
+      - name: VMMETenant
+        links:
+          - name: VHSSTenant
+      - name: VSPGWCTenant
+        links:
+          - name: VMMETenant
+      - name: HSSTenant
+        links:
+          - name: HSSDBServiceInstance
+      - name: HSSDBServiceInstance
 

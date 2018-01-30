@@ -78,17 +78,19 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
 
         blueprint = self.get_blueprint_and_check_dependencies(o)
 
-        if blueprint == 'cord_4_1_scenario':
+        if blueprint == 'cord_4_1_blueprint':
             return self.get_values_for_CORD_4_1(o)
-        elif blueprint == 'cord_5_0_scenario':
+        elif blueprint == 'cord_5_0_blueprint':
             return self.get_values_for_CORD_5_0(o)
+        elif blueprint == 'cord_5_p4_blueprint':
+            return self.get_extra_attributes_for_manual(o)  # should be changed to appropriate playbook
         else:
             return self.get_extra_attributes_for_manual(o)
 
     # fields for manual case
     def get_extra_attributes_for_manual(self, o):
         fields = {}
-        fields['scenario'] = "manual"
+        fields['blueprint'] = "manual"
         fields['cord_version'] = "manual"
         # for interface.cfg file
         fields['zmq_sub_ip'] = "manual"
@@ -112,7 +114,7 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
     def get_values_for_CORD_4_1(self, o):
         fields = {}
         fields['cord_version'] = "4.1"
-        fields['scenario'] = "cord_4_1_scenario"
+        fields['blueprint'] = "cord_4_1_blueprint"
         # for interface.cfg file
         fields['zmq_sub_ip'] = "127.0.0.1"
         fields['zmq_pub_ip'] = "127.0.0.1"
@@ -142,7 +144,7 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
     def get_values_for_CORD_5_0(self, o):
         fields = {}
         fields['cord_version'] = "5.0"
-        fields['scenario'] = "cord_5_0_scenario"
+        fields['blueprint'] = "cord_5_0_blueprint"
 
         # for interface.cfg file
         fields['zmq_sub_ip'] = "127.0.0.1"

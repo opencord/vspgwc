@@ -54,4 +54,4 @@
     - ip_pool_mask: "255.0.0.0"
     - ip_pool_mask_int: "8"
   roles:
-      - onos_rule_setup
+      - { role: onos_rule_setup, when: scenario != "manual" }
