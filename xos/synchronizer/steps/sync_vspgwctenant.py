@@ -207,11 +207,17 @@ class SyncVSPGWCTenant(SyncInstanceUsingAnsible):
         blueprint = next(
                 b for b in blueprints if b['name'] == blueprint_name)
         node = next(n for n in blueprint['graph'] if n['name'] == o.leaf_model_name)
-        for link in node['links']:
+
+        try:
+            links = node['links']
+        except KeyError:
+            links = []
+
+        for link in links:
             flag = self.has_instance(link['name'], o)
             if not flag:
                 self.defer_sync('%s does not have an instance. Deferring synchronization.'%link['name'])
-            
+
     def get_blueprint_and_check_dependencies(self, o):
         adj_set = self.adj_set_of_service_graph(o)
         blueprint_name = self.find_first_blueprint_subgraph(blueprints, adj_set)
