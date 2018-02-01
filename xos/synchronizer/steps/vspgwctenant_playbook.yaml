@@ -53,5 +53,6 @@
     - ip_addr_pool: "16.0.0.0"
     - ip_pool_mask: "255.0.0.0"
     - ip_pool_mask_int: "8"
+    - scenario: {{ blueprint }}
   roles:
       - { role: onos_rule_setup, when: scenario != "manual" }
