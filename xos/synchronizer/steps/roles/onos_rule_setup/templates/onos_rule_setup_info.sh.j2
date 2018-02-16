@@ -63,7 +63,7 @@ function get_ip_addr_fabric {
         TMP_MAC_ADDR=$(get_host_fabric $INDEX | awk -F "," '{split($2, MAC_RAW_RESULT, "\":\"") ; print substr(MAC_RAW_RESULT[2], 1, length(MAC_RAW_RESULT[2])-1)}')
         if [ "$MAC_ADDR" = "$TMP_MAC_ADDR" ];
         then
-            echo $TMP_IP_ADDR
+            echo $TMP_IP_ADDR | awk '{sub(/"/, "", $1); print}'
         fi
     done
 }
@@ -76,7 +76,7 @@ function get_mac_address_fabric {
     MAC_CLASS_D=$(echo $SWITCH_ID | awk -F ":" '{print substr($2, length($2)-7, 2)}' | tr '[a-z]' '[A-Z]')
     MAC_CLASS_E=$(echo $SWITCH_ID | awk -F ":" '{print substr($2, length($2)-9, 2)}' | tr '[a-z]' '[A-Z]')
     MAC_CLASS_F=$(echo $SWITCH_ID | awk -F ":" '{print substr($2, length($2)-11, 2)}' | tr '[a-z]' '[A-Z]')
-    echo $MAC_CLASS_F:$MAC_CLASS_E:$MAC_CLASS_D:$MAC_CLASS_C:$MAC_CLASS_B:$MAC_CLASS_A
+    echo $MAC_CLASS_F:$MAC_CLASS_E:$MAC_CLASS_D:$MAC_CLASS_C:$MAC_CLASS_B:$MAC_CLASS_A | awk '{sub(/"/, "", $1); print}'
 }
 function get_port_number {
 	IP_ADDR=$1
@@ -87,7 +87,7 @@ function get_port_number {
 		TMP_PORT_NUMBER=$(get_host $INDEX | awk -F "," '{split($7, PORT_RAW_RESULT, ":"); print substr(PORT_RAW_RESULT[2], 2, length(PORT_RAW_RESULT[2])-3)}')
 		if [ "$IP_ADDR" = "$TMP_IP_ADDR" ];
 		then
-			echo $TMP_PORT_NUMBER
+			echo $TMP_PORT_NUMBER | awk '{sub(/"/, "", $1); print}'
 		fi
 	done
 }
@@ -101,7 +101,7 @@ function get_mac_address {
 		TMP_MAC_ADDR=$(get_host $INDEX | awk -F "," '{split($2, MAC_RAW_RESULT, "\":\"") ; print substr(MAC_RAW_RESULT[2], 1, length(MAC_RAW_RESULT[2])-1)}')
 		if [ "$IP_ADDR" = "$TMP_IP_ADDR" ];
 		then
-			echo $TMP_MAC_ADDR | tr '[A-Z]' '[a-z]'
+			echo $TMP_MAC_ADDR | tr '[A-Z]' '[a-z]' | awk '{sub(/"/, "", $1); print}'
 		fi
 	done
 }
@@ -115,7 +115,7 @@ function get_switch_id {
 		TMP_SWITCH_ID=$(get_host $INDEX | awk -F "," '{split($6, SW_RAW_RESULT, "\":\"") ; print substr(SW_RAW_RESULT[2], 1, length(SW_RAW_RESULT[2])-1)}')
 		if [ "$IP_ADDR" = "$TMP_IP_ADDR" ];
 		then
-			echo $TMP_SWITCH_ID
+			echo $TMP_SWITCH_ID | awk '{sub(/"/, "", $1); print}'
 		fi
 	done
 }
