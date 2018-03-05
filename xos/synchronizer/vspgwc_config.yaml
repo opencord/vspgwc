@@ -12,14 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: vspgwc-synchronizer
+name: vspgwc
 accessor:
   username: xosadmin@opencord.org
   password: "@/opt/xos/services/vspgwc/credentials/xosadmin@opencord.org"
+required_models:
+  - VSPGWCService
+  - VSPGWCVendor
+  - VSPGWCTenant
 dependency_graph: "/opt/xos/synchronizers/vspgwc/model-deps"
 steps_dir: "/opt/xos/synchronizers/vspgwc/steps"
 sys_dir: "/opt/xos/synchronizers/vspgwc/sys"
 model_policies_dir: "/opt/xos/synchronizers/vspgwc/model_policies"
+models_dir: "/opt/xos/synchronizers/vspgwc/models"
 blueprints:
   - name: cord_5_0_blueprint
     graph:
