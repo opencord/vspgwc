@@ -13,9 +13,6 @@
 # limitations under the License.
 
 name: vspgwc
-accessor:
-  username: xosadmin@opencord.org
-  password: "@/opt/xos/services/vspgwc/credentials/xosadmin@opencord.org"
 required_models:
   - VSPGWCService
   - VSPGWCVendor
@@ -25,6 +22,16 @@ steps_dir: "/opt/xos/synchronizers/vspgwc/steps"
 sys_dir: "/opt/xos/synchronizers/vspgwc/sys"
 model_policies_dir: "/opt/xos/synchronizers/vspgwc/model_policies"
 models_dir: "/opt/xos/synchronizers/vspgwc/models"
+logging:
+  version: 1
+  handlers:
+    console:
+      class: logging.StreamHandler
+  loggers:
+    'multistructlog':
+      handlers:
+          - console
+      level: DEBUG
 blueprints:
   - name: cord_5_0_blueprint
     graph:
@@ -62,4 +69,3 @@ blueprints:
         links:
           - name: HSSDBServiceInstance
       - name: HSSDBServiceInstance
-
