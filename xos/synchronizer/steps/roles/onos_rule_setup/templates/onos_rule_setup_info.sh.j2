@@ -24,17 +24,13 @@ UE_NETMASK={{ ip_pool_mask }}
 ONOS_ID="karaf"
 ONOS_PW="karaf"
 
-# To get IP address for Head Node (to access ONOS-VTN/fabric)
-function get_head_node {
-	netstat -nr | awk '{if ($1 == "0.0.0.0") print $2}'
-}
 
 function get_hosts {
-	echo $(curl $(get_head_node)/vtn/onos/v1/hosts -u $ONOS_ID:$ONOS_PW)
+	echo $(curl http://onos-cord-ui:8181/onos/v1/hosts -s -u $ONOS_ID:$ONOS_PW)
 }
 
 function get_hosts_fabric {
-    echo $(curl $(get_head_node):8181/onos/v1/hosts -u $ONOS_ID:$ONOS_PW)
+    echo $(curl http://onos-fabric-ui:8181/onos/v1/hosts -s -u $ONOS_ID:$ONOS_PW)
 }
 
 function get_host {
@@ -180,9 +176,6 @@ elif [ "$CMD" == "-i" ] || [ "$CMD" == "--ip" ]; then
 	elif [ "$OPTION" == "spgwu" ]; then
 		echo $SGI_SPGWU > spgwu_ip
 		cat spgwu_ip
-	elif [ "$OPTION" == "onos" ]; then
-		get_head_node > onos_ip
-		cat onos_ip
 	else
 		echo "Wrong argument"
 		print_help_ip

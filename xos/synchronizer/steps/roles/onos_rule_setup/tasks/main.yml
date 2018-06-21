@@ -19,10 +19,6 @@
     src=onos_rule_setup_info.sh.j2
     dest=/opt/xos/synchronizers/vspgwc/onos_rule_setup_info.sh owner=root group=root mode=755
 
-- name: get onos ip address
-  shell: /opt/xos/synchronizers/vspgwc/onos_rule_setup_info.sh -i onos
-  register: tmp_onos_ip
-
 - name: get application server (Internet) port for SGi
   shell: /opt/xos/synchronizers/vspgwc/onos_rule_setup_info.sh -p enb
   register: tmp_as_sgi_port
@@ -49,7 +45,6 @@
 
 - name: assign results into each variable
   set_fact:
-    onos_ip: "{{ tmp_onos_ip.stdout }}"
     as_sgi_port: "{{ tmp_as_sgi_port.stdout }}"
     spgwu_sgi_port: "{{ tmp_spgwu_sgi_port.stdout }}"
     enb_sw_id: "{{ tmp_enb_sw_id.stdout }}"
@@ -68,7 +63,7 @@
     dest=/opt/xos/synchronizers/vspgwc/flow_spgwu.json owner=root group=root mode=755
 
 - name: set flow for enb and spgwu to ONOS
-  shell: "curl -X POST -H \"Content-Type: application/json\" -u onos:rocks -d @/opt/xos/synchronizers/vspgwc/flow_enb.json http://{{ onos_ip }}:8182/onos/v1/flows/{{ enb_sw_id }} ; curl -X POST -H \"Content-Type: application/json\" -u onos:rocks -d @/opt/xos/synchronizers/vspgwc/flow_spgwu.json http://{{ onos_ip }}:8182/onos/v1/flows/{{ spgwu_sw_id }}"
+  shell: "curl -X POST -H \"Content-Type: application/json\" -s -u onos:rocks -d @/opt/xos/synchronizers/vspgwc/flow_enb.json http://onos-cord-ui:8181/onos/v1/flows/{{ enb_sw_id }} ; curl -X POST -H \"Content-Type: application/json\" -s -u onos:rocks -d @/opt/xos/synchronizers/vspgwc/flow_spgwu.json http://onos-cord-ui:8181/onos/v1/flows/{{ spgwu_sw_id }}"
 
 - name: make json file for flow of enb to tunnel
   when: enb_sw_ip != spgwu_sw_ip
@@ -84,4 +79,4 @@
 
 - name: set flow for enb and spgwu through tunnel to ONOS
   when: enb_sw_ip != spgwu_sw_ip
-  shell: "curl -X POST -H \"Content-Type: application/json\" -u onos:rocks -d @/opt/xos/synchronizers/vspgwc/flow_enb_tnl.json http://{{ onos_ip }}:8182/onos/v1/flows/{{ spgwu_sw_id }} ; curl -X POST -H \"Content-Type: application/json\" -u onos:rocks -d @/opt/xos/synchronizers/vspgwc/flow_spgwu_tnl.json http://{{ onos_ip }}:8182/onos/v1/flows/{{ enb_sw_id }}"
+  shell: "curl -X POST -H \"Content-Type: application/json\" -s -u onos:rocks -d @/opt/xos/synchronizers/vspgwc/flow_enb_tnl.json http://onos-cord-ui:8181/onos/v1/flows/{{ spgwu_sw_id }} ; curl -X POST -H \"Content-Type: application/json\" -s -u onos:rocks -d @/opt/xos/synchronizers/vspgwc/flow_spgwu_tnl.json http://onos-cord-ui:8181/onos/v1/flows/{{ enb_sw_id }}"

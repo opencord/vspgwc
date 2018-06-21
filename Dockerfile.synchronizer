@@ -15,6 +15,10 @@
 # xosproject/vspgwc-synchronizer
 FROM xosproject/xos-synchronizer-base:candidate
 
+RUN apt-get update && apt-get install -y \
+    net-tools \
+ && rm -rf /var/lib/apt/lists/*
+
 COPY xos/synchronizer /opt/xos/synchronizers/vspgwc
 COPY VERSION /opt/xos/synchronizers/vspgwc/
 
